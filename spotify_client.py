@@ -1,73 +1,60 @@
 from client_secret import *
-from base64 import b64encode
 
-import requests
-import json
+import spotipy
+import spotipy.util as util
 
 class SpotifyClient:
 
     def __init__(self):
         super().__init__()
 
-        self.token = CLIENT_TOKEN
-
     def getToken(self):
         print('[*] Getting the access token')
 
-        ids = '{}:{}'.format(CLIENT_ID, CLIENT_SECRET).encode()
-        headers = {'Authorization': 'Basic {}'.format((b64encode(ids)).decode("utf-8"))}
-        payload = {'grant_type': 'client_credentials'}
+        self.token = util.prompt_for_user_token(CLIENT_USERNAME,
+            'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private playlist-read-collaborative',
+            client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            redirect_uri='https://www.google.fr/')
 
-        response = requests.post("https://accounts.spotify.com/api/token", headers=headers, data=payload)
-        json_response = response.json()
+        self.sp = spotipy.Spotify(auth=self.token)
 
-        self.token = json_response['access_token']
-
-    def getMyId(self):
-        if self.token is not None:
-            print('[*] Getting the account Id')
-
-            headers = {'Authorization': 'Bearer {}'.format(self.token)}
-
-            response = requests.get("https://api.spotify.com/v1/me", headers=headers)
-            json_response = response.json()
-
-            self.id = json_response['id']
-
-    def getListPlaylistTitle(self):
-        names = []
-
-        if self.token is not None:
-            headers = {'Authorization': 'Bearer {}'.format(self.token)}
-
-            response = requests.get("https://api.spotify.com/v1/me/playlists", headers=headers)
-            json_response = response.json()
-            
-            for playlist in json_response['items']:
-                names.append(playlist['name'])
-
-        return names
-
-    def isPlaylistExists(self, title):
-        print('[*] Checking if the playlist exists')
-
-        names = self.getListPlaylistTitle()
-
-        return title in names
-
-    def createPlaylist(self, title):
-        if self.token is not None and self.id is not None and not self.isPlaylistExists(title):
+    def createPlaylist(self, title, description = ''):
+        if self.token:
             print('[*] Creating the playlist : {}'.format(title))
 
-            headers = {'Authorization': 'Bearer {}'.format(self.token)}
-            data = json.dumps({
-                "name": title,
-                "description": "Test Desc",
-                "public": "false"
-            })
+            response = self.sp.user_playlist_create(CLIENT_USERNAME, title, description)
 
-            response = requests.post("https://api.spotify.com/v1/users/{}/playlists".format(self.id), headers=headers, data=data)
-            json_response = response.json()
+            return response['id']
+        
+        return None
+    
+    def getPlaylist(self, title):
+        if self.token:
+            print('[*] Trying to get the playlist with the title : {}'.format(title))
 
-            print(json_response)
+            playlists = self.sp.user_playlists(CLIENT_USERNAME)
 
+            for playlist in playlists['items']:
+                if playlist['owner']['id'] == CLIENT_USERNAME and playlist['name'] == title:
+                    return playlist['id']
+            
+            return self.createPlaylist(title)
+        
+        return None
+
+    def searchTrackId(self, title):
+        if self.token:
+            print('[*] Getting the track with the title : {}'.format(title))
+
+            result = self.sp.search(title)
+
+            if len(result['tracks']['items']) > 0:
+                print("[*] Got the track named '{}'".format(result['tracks']['items'][0]['name']))
+
+                return result['tracks']['items'][0]['id']
+
+    def addTracksToPlaylist(self, playlist_id, track_ids):
+        print('[*] Adding {} tracks to the playlist'.format(str(len(track_ids))))
+
+        results = self.sp.user_playlist_add_tracks(CLIENT_USERNAME, playlist_id, track_ids)

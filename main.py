@@ -1,6 +1,8 @@
 from spotify_client import SpotifyClient
 
 spotify = SpotifyClient()
+spotify.getToken()
+playlistId = spotify.getPlaylist('Test')
+trackId = spotify.searchTrackId('Life is a dancefloor')
 
-spotify.getMyId()
-spotify.createPlaylist('Test')
+spotify.addTracksToPlaylist(playlistId, [trackId])
