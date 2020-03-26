@@ -102,6 +102,9 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 
+# Specific to project
+client_secret.py
+
 # SageMath parsed files
 *.sage.py
 
