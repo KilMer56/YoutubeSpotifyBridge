@@ -36,23 +36,40 @@ class SpotifyClient:
             playlists = self.sp.user_playlists(SPOTIFY_CLIENT_USERNAME)
 
             for playlist in playlists['items']:
-                if playlist['owner']['id'] == SPOTIFY_CLIENT_USERNAME and playlist['name'] == title:
+                if playlist['name'] == title:
                     return playlist['id']
             
             return self.createPlaylist(title)
         
         return None
 
-    def searchTrackId(self, title):
+    def searchTrackId(self, title, artist = None):
         if self.token:
-            print('[*] Spotify: Getting the track with the title : {}'.format(title))
+            printArtist = '' if not artist else 'and the artist : {}'.format(artist)
+            print('[*] Spotify: Getting the track with the title : {} {}'.format(title, printArtist))
 
             result = self.sp.search(title)
 
             if len(result['tracks']['items']) > 0:
-                print("[*] Spotify: Got the track named '{}'".format(result['tracks']['items'][0]['name']))
+                trackId = None
+                trackName = None
 
-                return result['tracks']['items'][0]['id']
+                if artist:
+                    for track in result['tracks']['items']:
+                        if track['artists'][0]['name'].lower() == artist:
+                            trackId = track['id']
+                            trackName = track['name']
+                            break
+                else:
+                    trackId = result['tracks']['items'][0]['id']
+                    trackName = result['tracks']['items'][0]['name']
+                    
+                if trackId:
+                    print("[*] Spotify: Got the track named '{}'".format(trackName))
+
+                    return trackId
+            else:
+                print('[*] Spotify: Track not found')
 
     def addTracksToPlaylist(self, playlist_id, track_ids):
         print('[*] Spotify: Adding {} tracks to the playlist'.format(str(len(track_ids))))

@@ -11,7 +11,7 @@ class Bridge:
         self.youtube = YoutubeClient()
         self.spotify = SpotifyClient()
 
-        self.youtubePlaylistTitle = 'Spotify'
+        self.youtubePlaylistTitle = 'Colloc / Mix House Funky'
         self.spotifyPlaylistTitle = 'Youtube'
 
         with open('fetched_songs.json') as json_file:
@@ -37,9 +37,8 @@ class Bridge:
 
                 if len(videosToFetch) > 0:
                     for videoTitle in videosToFetch:
-                        trackId = self.spotify.searchTrackId(videoTitle)
-                        
-                        print(trackId)
+                        trackId = self.getSpotifyTrackId(videoTitle)
+
                         if trackId:
                             trackIds.append(trackId)
 
@@ -51,3 +50,16 @@ class Bridge:
 
                     with open('fetched_songs.json', 'w') as outfile:
                         json.dump(data, outfile)
+
+    def getSpotifyTrackId(self, title):
+        trackId = self.spotify.searchTrackId(title)
+
+        if not trackId and title.find("-") != -1:
+            titleParts = title.split("-")
+            trackId = self.spotify.searchTrackId(titleParts[1].strip(), titleParts[0].strip().lower())
+
+            if not trackId and titleParts[1].find("(") != -1:
+                title = titleParts[1].split("(")[0]
+                trackId = self.spotify.searchTrackId(title, titleParts[0].strip().lower())
+
+        return trackId
