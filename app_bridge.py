@@ -11,12 +11,8 @@ class Bridge:
         self.youtube = YoutubeClient()
         self.spotify = SpotifyClient()
 
-        self.youtubePlaylistTitle = 'Colloc / Mix House Funky'
+        self.youtubePlaylistTitle = 'Spotify'
         self.spotifyPlaylistTitle = 'Youtube'
-
-        with open('fetched_songs.json') as json_file:
-            data = json.load(json_file)
-            self.songs = data['songs']
     
     def initCredentials(self):
         self.youtube.getCredentials()
@@ -26,11 +22,17 @@ class Bridge:
 
     def fetchYoutubePlaylist(self):
         if self.areCredentialsSet:
+            songs = []
+
+            with open('fetched_songs.json') as json_file:
+                data = json.load(json_file)
+                songs = data['songs']
+
             playlistId = self.youtube.getPlaylistId(self.youtubePlaylistTitle)
 
             if playlistId:
                 videos = self.youtube.getVideosInPlaylist(playlistId)
-                videosToFetch = [i for i in videos if i not in self.songs]
+                videosToFetch = [i for i in videos if i not in songs]
 
                 spotifyPlaylistId = self.spotify.getPlaylist(self.spotifyPlaylistTitle)
                 trackIds = []

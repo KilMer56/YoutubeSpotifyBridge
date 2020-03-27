@@ -8,19 +8,6 @@ class YoutubeClient:
 
     def getCredentials(self):
         print("[*] Youtube: Getting credentials")
-        
-        # os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-        
-        # api_service_name = "youtube"
-        # api_version = "v3"
-        # client_secrets_file = "youtube/youtube_secrets.json"
-        # scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
-
-        #  # Get credentials and create an API client
-        # flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(client_secrets_file, scopes)
-        # credentials = flow.run_console()
-
-        # self.youtube = googleapiclient.discovery.build(api_service_name, api_version, credentials=credentials)
 
         self.youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=YOUTUBE_DEVELOPER_KEY)
 
