@@ -42,18 +42,31 @@ class YoutubeClient:
         return None
 
     def getVideosInPlaylist(self, playlistId):
+        print("[*] Youtube: Getting the videos in the playlist")
+
         titles = []
+        response = None
+        nextPageToken = None
 
-        request = self.youtube.playlistItems().list(
-            part="snippet",
-            maxResults=50,
-            playlistId=playlistId
-        )
+        while response is None or nextPageToken:
 
-        response = request.execute()
+            request = self.youtube.playlistItems().list(
+                part="snippet",
+                maxResults=5,
+                playlistId=playlistId,
+                pageToken=nextPageToken
+            )
 
-        for video in response['items']:
-            titles.append(video['snippet']['title'])
+            response = request.execute()
 
-        print(titles)
+            for video in response['items']:
+                titles.append(video['snippet']['title'])
+
+            try:
+                nextPageToken = response['nextPageToken']
+            except KeyError:
+                nextPageToken = None
+            except TypeError:
+                nextPageToken = None
+
         return titles
