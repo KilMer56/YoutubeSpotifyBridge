@@ -56,14 +56,15 @@ class SpotifyClient:
 
                 if artist:
                     for track in result['tracks']['items']:
-                        if track['artists'][0]['name'].lower() == artist:
+                        print(track['name'].strip().lower(), title)
+                        if track['name'].strip().lower().find(title.strip().lower()) != -1 or track['artists'][0]['name'].lower() == artist:
                             trackId = track['id']
                             trackName = track['name']
                             break
                 else:
                     trackId = result['tracks']['items'][0]['id']
                     trackName = result['tracks']['items'][0]['name']
-                    
+
                 if trackId:
                     print("[*] Spotify: Got the track named '{}'".format(trackName))
 
