@@ -26,10 +26,6 @@ class Bridge:
         if self.areCredentialsSet:
             songs = []
 
-            # with open('fetched_songs.json') as json_file:
-            #     data = json.load(json_file)
-            #     songs = data['songs']
-
             playlistId = self.youtube.getPlaylistId(self.youtubePlaylistTitle)
 
             if playlistId:
@@ -38,13 +34,6 @@ class Bridge:
                 if len(videoIds) > 0:
                     for id in videoIds:
                         self.downloader.download(id)
-                
-                # videosToFetch = [i for i in videos if i not in songs]
-
-                # spotifyPlaylistId = self.spotify.getPlaylist(self.spotifyPlaylistTitle)
-                # trackIds = []
-
-                # if len(videosToFetch) > 0:
 
     def fetchYoutubePlaylist(self):
         if self.areCredentialsSet:

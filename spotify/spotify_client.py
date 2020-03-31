@@ -44,7 +44,7 @@ class SpotifyClient:
         return None
 
     def searchTrackId(self, title, artist = None):
-        if self.token:
+        if self.token and title and len(title) > 0:
             printArtist = '' if not artist else 'and the artist : {}'.format(artist)
             print('[*] Spotify: Getting the track with the title : {} {}'.format(title, printArtist))
 
@@ -54,9 +54,8 @@ class SpotifyClient:
                 trackId = None
                 trackName = None
 
-                if artist:
+                if artist and len(artist) > 0:
                     for track in result['tracks']['items']:
-                        print(track['name'].strip().lower(), title)
                         if track['name'].strip().lower().find(title.strip().lower()) != -1 or track['artists'][0]['name'].lower() == artist:
                             trackId = track['id']
                             trackName = track['name']

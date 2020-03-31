@@ -3,7 +3,7 @@ from app_bridge import Bridge
 import schedule
 import time
 
-print("[*] Running script every day at midnight")
+print("[*] Running script every hour")
 
 bridge = Bridge()
 bridge.initCredentials()
@@ -13,7 +13,7 @@ def fetch():
 
 try:
     fetch()
-    schedule.every().day.at("00:00").do(fetch)
+    schedule.every().hour.do(fetch)
 
     while True:
         schedule.run_pending()
