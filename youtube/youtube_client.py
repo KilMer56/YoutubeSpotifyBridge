@@ -57,3 +57,35 @@ class YoutubeClient:
                 nextPageToken = None
 
         return titles
+
+    def getVideosUrlInPlaylist(self, playlistId):
+        print("[*] Youtube: Getting the videos URL in the playlist")
+
+        videoIds = []
+        response = None
+        nextPageToken = None
+
+        base = "https://www.youtube.com/watch?v="
+
+        while response is None or nextPageToken:
+
+            request = self.youtube.playlistItems().list(
+                part="snippet",
+                maxResults=5,
+                playlistId='PLu2n6DhJfLiluUIWPno8x3v0qDHY6qBiS',
+                pageToken=nextPageToken
+            )
+
+            response = request.execute()
+
+            for video in response['items']:
+                videoIds.append(video['snippet']['resourceId']['videoId'])
+
+            try:
+                nextPageToken = response['nextPageToken']
+            except KeyError:
+                nextPageToken = None
+            except TypeError:
+                nextPageToken = None
+        
+        return videoIds

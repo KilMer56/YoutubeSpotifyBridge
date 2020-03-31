@@ -1,5 +1,6 @@
 from spotify.spotify_client import SpotifyClient
 from youtube.youtube_client import YoutubeClient
+from youtube.youtube_downloader import YoutubeDownloader
 
 import json
 
@@ -10,6 +11,7 @@ class Bridge:
 
         self.youtube = YoutubeClient()
         self.spotify = SpotifyClient()
+        self.downloader = YoutubeDownloader()
 
         self.youtubePlaylistTitle = 'Spotify'
         self.spotifyPlaylistTitle = 'Youtube'
@@ -19,6 +21,30 @@ class Bridge:
         self.spotify.getToken()
 
         self.areCredentialsSet = True
+
+    def downloadYoutubePlaylist(self):
+        if self.areCredentialsSet:
+            songs = []
+
+            # with open('fetched_songs.json') as json_file:
+            #     data = json.load(json_file)
+            #     songs = data['songs']
+
+            playlistId = self.youtube.getPlaylistId(self.youtubePlaylistTitle)
+
+            if playlistId:
+                videoIds = self.youtube.getVideosUrlInPlaylist(playlistId)
+
+                if len(videoIds) > 0:
+                    for id in videoIds:
+                        self.downloader.download(id)
+                
+                # videosToFetch = [i for i in videos if i not in songs]
+
+                # spotifyPlaylistId = self.spotify.getPlaylist(self.spotifyPlaylistTitle)
+                # trackIds = []
+
+                # if len(videosToFetch) > 0:
 
     def fetchYoutubePlaylist(self):
         if self.areCredentialsSet:

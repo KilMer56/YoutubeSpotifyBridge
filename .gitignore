@@ -105,6 +105,8 @@ celerybeat.pid
 # Specific to project
 *secrets*
 .cache-*
+downloads
+downloads/*
 
 # SageMath parsed files
 *.sage.py
