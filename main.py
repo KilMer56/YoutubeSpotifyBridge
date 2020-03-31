@@ -6,9 +6,9 @@ import time
 print("[*] Running script every hour")
 
 bridge = Bridge()
-bridge.initCredentials()
 
 def fetch():
+    bridge.initCredentials()
     bridge.fetchYoutubePlaylist()
 
 try:

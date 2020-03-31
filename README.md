@@ -14,6 +14,7 @@
 -   [Prerequisites](#prerequisites)
 -   [Configuration](#configuration)
 -   [Usage](#usage)
+-   [ToDo](#todo)
 -   [Author](#author)
 
 ## Prerequisites
@@ -62,6 +63,12 @@ Just run the following commands to launch the script (it will run every hour, bu
 docker build -t youtube_spotify_bridge .
 docker run youtube_spotify_bridge
 ```
+
+## ToDo
+- Improve configuration process (all vars within a single file)
+- Improve matching process between Youtube and Spotify
+- Documentation
+- Add interface ??
 
 ## Author
 
